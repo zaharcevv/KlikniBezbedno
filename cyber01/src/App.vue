@@ -1,7 +1,16 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import Navbar from './components/Navbar.vue'
 
 const globalParticlesCanvas = ref(null)
+const isTransitioning = ref(false)
+const route = useRoute()
+
+watch(route, () => {
+  isTransitioning.value = true
+  setTimeout(() => (isTransitioning.value = false), 600)
+})
 
 onMounted(() => {
   const canvas = globalParticlesCanvas.value
@@ -51,10 +60,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="global-background" aria-hidden="true"></div>
-  <canvas class="global-particles" ref="globalParticlesCanvas"></canvas>
-
-  <router-view />
+  <v-app>
+    <div class="global-background"></div>
+    <canvas class="global-particles" ref="globalParticlesCanvas"></canvas>
+    <div v-if="isTransitioning" class="transition-overlay"></div>
+        <Navbar />
+    <router-view v-slot="{ Component }">
+      <transition name="world" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
+  </v-app>
 </template>
 
 <style scoped>
@@ -73,6 +89,15 @@ onMounted(() => {
   pointer-events: none;
 }
 
+@keyframes scrollGrid {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 0 100px, 100px 0;
+  }
+}
+
 .global-particles {
   position: fixed;
   top: 0;
@@ -83,12 +108,42 @@ onMounted(() => {
   pointer-events: none;
 }
 
-@keyframes scrollGrid {
-  from {
-    background-position: 0 0, 0 0;
-  }
-  to {
-    background-position: 0 100px, 100px 0;
-  }
+.transition-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #00ffee33 0%, transparent 80%);
+  z-index: 5;
+  animation: pulseIn 0.6s ease;
+  pointer-events: none;
+}
+
+@keyframes pulseIn {
+  0% { opacity: 0; transform: scale(0.9); }
+  50% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.2); }
+}
+
+.world-enter-active, .world-leave-active {
+  transition: all 0.6s ease;
+}
+
+.world-enter-from {
+  opacity: 0;
+  transform: translateY(50px) scale(0.9);
+}
+
+.world-enter-to {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.world-leave-from {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.world-leave-to {
+  opacity: 0;
+  transform: translateY(-50px) scale(0.95);
 }
 </style>
