@@ -69,6 +69,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import { doc, updateDoc } from 'firebase/firestore'
+import { db } from '@/firebase/firebase.js'
 import { useUserStore } from '@/stores/user'
 import { islands } from '@/data/islands.js'
 import QuestionDialog from './QuestionDialog.vue'
@@ -89,18 +91,29 @@ const openIsland = (island) => {
   }
 }
 
-const onCompleted = () => {
+const onCompleted = async () => {
   if (userData.currentIsland < selectedIsland.value.id + 1) {
     userData.currentIsland++
     userData.xp += 10
     fireConfetti()
+
+    try {
+      const userRef = doc(db, 'users', userData.uid)
+      await updateDoc(userRef, {
+        currentIsland: userData.currentIsland,
+        xp: userData.xp,
+        updatedAt: new Date()
+      })
+    } catch (err) {
+      console.error('Error saving progress:', err)
+    }
   }
 }
 
 const fireConfetti = () => {
   const myConfetti = confetti.create(confettiCanvas.value, {
     resize: true,
-    useWorker: true,
+    useWorker: true
   })
 
   myConfetti({
@@ -108,10 +121,11 @@ const fireConfetti = () => {
     spread: 120,
     origin: { y: 0.6 },
     colors: ['#00ffee', '#ff00c8', '#00c8ff', '#ffffff'],
-    shapes: ['circle', 'square'],
+    shapes: ['circle', 'square']
   })
 }
 </script>
+
 
 <style scoped>
 .map-wrapper {

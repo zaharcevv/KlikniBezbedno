@@ -2,78 +2,75 @@
   <div class="profile-wrapper">
     <v-container class="profile-container" fluid>
       <v-card class="profile-card" flat>
-        <!-- BACK BUTTON -->
-        <v-btn class="back-btn" color="cyan lighten-2" @click="goBack" icon>
-          <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-
-        <h1 class="profile-title">Твојот Cyber Профил</h1>
+        <h1 class="profile-title">Your Cyber Hero Profile</h1>
 
         <v-avatar v-if="userData?.avatar" size="120" class="avatar-glow mb-6">
           <img :src="userData.avatar" alt="avatar" />
         </v-avatar>
 
         <div class="profile-info">
-          <p><strong>Корисничко име:</strong> {{ userData?.username || 'N/A' }}</p>
+          <p><strong>Username:</strong> {{ userData?.username || 'N/A' }}</p>
           <p><strong>Email:</strong> {{ user?.email || 'N/A' }}</p>
-          <p><strong>Ниво:</strong> <span class="level-tag">Стигнува наскоро...</span></p>
+          <p><strong>Level:</strong> <span class="level-tag">Coming soon...</span></p>
         </div>
 
         <v-btn class="logout-button mt-6" @click="logout" block>
-          Одјави се
+          Logout
         </v-btn>
       </v-card>
+
     </v-container>
   </div>
 </template>
 
-<script setup>
+<script>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebase/firebase'
 
-const router = useRouter()
-const user = ref(null)
-const userData = ref(null)
 
-const auth = getAuth()
+export default {
+  setup() {
+    const user = ref(null)
+    const userData = ref(null)
+    const router = useRouter()
 
-onMounted(() => {
-  onAuthStateChanged(auth, async (currentUser) => {
-    if (!currentUser) return
-    user.value = currentUser
+    const auth = getAuth()
 
-    try {
-      const docRef = doc(db, 'users', currentUser.uid)
-      const docSnap = await getDoc(docRef)
-      if (docSnap.exists()) {
-        userData.value = docSnap.data()
+    onMounted(() => {
+      onAuthStateChanged(auth, async (currentUser) => {
+        if (!currentUser) return
+        user.value = currentUser
+
+        try {
+          const docRef = doc(db, 'users', currentUser.uid)
+          const docSnap = await getDoc(docRef)
+          if (docSnap.exists()) {
+            userData.value = docSnap.data()
+          }
+        } catch (err) {
+          console.error('Error fetching user data:', err)
+        }
+      })
+    })
+
+    const logout = async () => {
+      try {
+        await signOut(auth)
+        router.push('/login')
+      } catch (err) {
+        console.error('Logout failed:', err)
       }
-    } catch (err) {
-      console.error('Error fetching user data:', err)
     }
-  })
-})
 
-const logout = async () => {
-  try {
-    await signOut(auth)
-    router.push('/login')
-  } catch (err) {
-    console.error('Logout failed:', err)
+    return { user, userData, logout }
   }
-}
-
-const goBack = () => {
-  router.back()
 }
 </script>
 
 <style scoped>
-@import 'https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap';
-
 .profile-wrapper {
   min-height: 100vh;
   display: flex;
@@ -101,24 +98,6 @@ const goBack = () => {
   max-width: 500px;
   width: 100%;
   animation: fadeIn 0.8s ease-out;
-  position: relative;
-}
-
-.back-btn {
-  position: absolute;
-  top: 9px;
-  left: 9px;
-  z-index:1 20;
-  background-color: rgba(0, 255, 238, 0.08);
-  backdrop-filter: blur(6px);
-  border-radius: 50%;
-  box-shadow: 0 0 12px #00ffee55;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.back-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 18px #00ffeeaa;
 }
 
 .profile-title {
