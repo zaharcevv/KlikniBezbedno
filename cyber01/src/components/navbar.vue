@@ -8,6 +8,7 @@
       <v-toolbar-items class="d-none d-sm-flex">
         <v-btn text to="/">Home</v-btn>
         <v-btn text to="/map">Play</v-btn>
+        <v-btn text to="/login">Login</v-btn>
         <v-btn text to="/about">About</v-btn>
       </v-toolbar-items>
     </v-container>

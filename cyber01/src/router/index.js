@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import GameMap from '@/components/GameMap.vue'
+import Register from '@/components/auth/Register.vue'
+import Login from '@/components/auth/Login.vue'
+import ProfileSetup from '@/components/ProfileSetup.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +18,21 @@ const router = createRouter({
       name: 'GameMap',
       component: GameMap,
     },
+    {
+      path: '/register',
+      name: 'Register',
+      component: Register,
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/setup',
+      name: 'ProfileSetup',
+      component: ProfileSetup
+    }
   ],
 })
 
