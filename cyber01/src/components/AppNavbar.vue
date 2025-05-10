@@ -63,37 +63,23 @@
       @completed="onCompleted"
     />
 
-    <!-- 🔻 Bottom Navigation -->
-    <v-bottom-navigation
-      app
-      height="64"
-      class="cyber-bottom-nav"
-      v-model="activeNav"
-    >
-      <v-btn to="/map" value="/map" icon>
-        <v-icon>mdi-map</v-icon>
-      </v-btn>
-      <v-btn to="/profile" value="/profile" icon>
-        <v-icon>mdi-account-circle</v-icon>
-      </v-btn>
-      <v-btn to="/about" value="/about" icon>
-        <v-icon>mdi-information</v-icon>
-      </v-btn>
+    <v-bottom-navigation app height="64" class="cyber-bottom-nav">
+      <v-btn to="/map" icon><v-icon>mdi-map</v-icon></v-btn>
+      <v-btn to="/achievements" icon><v-icon>mdi-trophy</v-icon></v-btn>
+      <v-btn to="/profile" icon><v-icon>mdi-account</v-icon></v-btn>
     </v-bottom-navigation>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { useRoute } from 'vue-router'
 import { islands } from '@/data/islands.js'
 import QuestionDialog from './QuestionDialog.vue'
 import confetti from 'canvas-confetti'
 
 const userStore = useUserStore()
 const userData = userStore.userData
-
 const selectedIsland = ref(null)
 const showDialog = ref(false)
 const confettiCanvas = ref(null)
@@ -127,15 +113,11 @@ const fireConfetti = () => {
     shapes: ['circle', 'square'],
   })
 }
-
-// 🔽 Active navigation detection
-const route = useRoute()
-const activeNav = computed(() => route.path)
 </script>
 
 <style scoped>
 .map-wrapper {
-  padding-top: 80px;
+  padding-top: 140px;
   animation: fadeIn 1s ease;
   position: relative;
 }
@@ -153,6 +135,29 @@ const activeNav = computed(() => route.path)
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.progress-container {
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  text-align: center;
+}
+.progress-text {
+  color: #00ffee;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 10px;
+  background: #222;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ffee, #ff00c8);
+  transition: width 0.5s ease;
 }
 
 .vertical-map-wrapper {
@@ -266,6 +271,43 @@ const activeNav = computed(() => route.path)
   z-index: 3;
 }
 
+.you-are-here {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #ff00c8;
+  background: #0e0e1a;
+  border: 1px solid #ff00c8;
+  border-radius: 8px;
+  padding: 2px 6px;
+  box-shadow: 0 0 8px #ff00c8aa;
+  z-index: 3;
+}
+
+.unlocked-badge {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #00ffee;
+  color: #000;
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  box-shadow: 0 0 12px #00ffeeaa;
+  animation: floatUp 2s ease-out;
+  z-index: 4;
+}
+
+@keyframes floatUp {
+  0% { opacity: 0; transform: translate(-50%, 10px); }
+  30% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -30px); }
+}
+
 .level-label {
   margin-top: 10px;
   font-size: 16px;
@@ -276,14 +318,14 @@ const activeNav = computed(() => route.path)
 }
 
 .cyber-bottom-nav {
-  background: rgba(14, 20, 30, 0.85);
+  background: rgba(14, 20, 30, 0.8);
   backdrop-filter: blur(10px);
   border-top: 1px solid #00ffee33;
   box-shadow: 0 -2px 10px #00ffee55;
   position: fixed;
   bottom: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 10;
 }
 
 .v-bottom-navigation .v-btn {
