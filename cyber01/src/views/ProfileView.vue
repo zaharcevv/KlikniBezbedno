@@ -2,16 +2,15 @@
   <div class="profile-wrapper">
     <v-container class="profile-container" fluid>
       <v-card class="profile-card" flat>
-        <h1 class="profile-title">Your Cyber Hero Profile</h1>
+        <h1 class="profile-title">Твојот Сајбер Херој!</h1>
 
         <v-avatar v-if="userData?.avatar" size="120" class="avatar-glow mb-6">
           <img :src="userData.avatar" alt="avatar" />
         </v-avatar>
 
         <div class="profile-info">
-          <p><strong>Username:</strong> {{ userData?.username || 'N/A' }}</p>
-          <p><strong>Email:</strong> {{ user?.email || 'N/A' }}</p>
-          <p><strong>Level:</strong> <span class="level-tag">Coming soon...</span></p>
+          <p>{{ userData?.username || 'N/A' }}</p>
+          <p>{{ user?.email || 'N/A' }}</p>
         </div>
 
         <v-btn class="logout-button mt-6" @click="logout" block>

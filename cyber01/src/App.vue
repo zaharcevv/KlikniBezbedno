@@ -1,11 +1,14 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-// import AppNavbar from '@/components/AppNavbar.vue'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '@/firebase/firebase'
+import { useUserStore } from '@/stores/user'
 
 const globalParticlesCanvas = ref(null)
 const isTransitioning = ref(false)
 const route = useRoute()
+const userStore = useUserStore()
 
 watch(route, () => {
   isTransitioning.value = true
@@ -13,6 +16,14 @@ watch(route, () => {
 })
 
 onMounted(() => {
+  // Load user data on auth state change
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      await userStore.fetchUserData()
+    }
+  })
+
+  // Particles setup
   const canvas = globalParticlesCanvas.value
   const ctx = canvas.getContext('2d')
   let particles = []
@@ -56,8 +67,8 @@ onMounted(() => {
   createParticles()
   animate()
 })
-
 </script>
+
 
 <template>
   <v-app>
