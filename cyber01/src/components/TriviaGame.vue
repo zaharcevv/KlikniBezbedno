@@ -1,14 +1,12 @@
 <template>
   <div class="mini-game">
     <div class="mini-game-content">
-      <!-- Start Screen -->
-      <div v-if="!started && !gameOver">
+      <div v-if="!started && !gameOver" class="start-section">
         <h2>🎮 Мини игра</h2>
-        <p class="high-score">🎖 Твојот рекорд: {{ highScore }} поени</p>
+        <p class="high-score">Твојот рекорд: {{ highScore }} поени</p>
         <button @click="startGame" class="start-btn">Започни мини игра</button>
       </div>
 
-      <!-- Game Screen -->
       <div v-if="started && !gameOver">
         <div class="info-bar">
           <h3>⏳ Време: {{ timeLeft }}s</h3>
@@ -30,12 +28,25 @@
         </div>
       </div>
 
-      <!-- Game Over Screen -->
       <div v-if="gameOver">
         <h2>⏰ Времето истече!</h2>
         <p>Вашиот краен резултат: <strong>{{ score }}</strong></p>
         <button @click="resetGame" class="start-btn">Играј повторно</button>
       </div>
+    </div>
+
+    <div class="leaderboard-section">
+      <h3>🏆 Лидерборд</h3>
+      <ul>
+        <li v-for="entry in leaderboard" :key="entry.id" class="leaderboard-entry">
+          <img
+            class="avatar"
+            :src="entry.avatar || defaultAvatar"
+            alt="avatar"
+          />
+          <strong>{{ entry.username }}</strong> — {{ entry.score }} поени
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -44,10 +55,16 @@
 import questions from '@/assets/questions.js';
 import { getAuth } from 'firebase/auth';
 import { db } from '@/firebase/firebase.js';
-import { getDoc, doc, setDoc } from 'firebase/firestore';
+import {
+  getDoc,
+  getDocs,
+  doc,
+  setDoc,
+  collection,
+} from 'firebase/firestore';
 
 export default {
-  name: 'MiniGame',
+  name: 'TriviaGame',
   data() {
     return {
       allQuestions: [...questions],
@@ -59,6 +76,8 @@ export default {
       started: false,
       gameOver: false,
       highScore: 0,
+      leaderboard: [],
+      defaultAvatar: 'https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=DefaultUser',
     };
   },
   methods: {
@@ -66,15 +85,30 @@ export default {
       const user = getAuth().currentUser;
       if (!user) return;
 
-      const highscoreRef = doc(db, 'users', user.uid, 'trivia', 'highscore');
-      try {
-        const snapshot = await getDoc(highscoreRef);
-        if (snapshot.exists()) {
-          this.highScore = snapshot.data().score || 0;
-        }
-      } catch (err) {
-        console.error('Failed to fetch high score:', err);
+      const ref = doc(db, 'users', user.uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        this.highScore = snap.data().triviaScore || 0;
       }
+    },
+
+    async fetchLeaderboard() {
+      const snap = await getDocs(collection(db, 'users'));
+      const list = [];
+
+      snap.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.triviaScore !== undefined) {
+          list.push({
+            id: docSnap.id,
+            username: data.username || 'Непознат',
+            avatar: data.avatar || null,
+            score: data.triviaScore,
+          });
+        }
+      });
+
+      this.leaderboard = list.sort((a, b) => b.score - a.score);
     },
 
     startGame() {
@@ -104,9 +138,6 @@ export default {
         const question = this.availableQuestions.pop();
         question.options = this.shuffle([...question.options]);
         this.currentQuestion = question;
-      } else {
-        this.availableQuestions = this.shuffle([...this.allQuestions]);
-        this.nextQuestion();
       }
     },
 
@@ -118,7 +149,6 @@ export default {
     },
 
     startTimer() {
-      this.timeLeft = 60;
       this.timer = setInterval(() => {
         this.timeLeft--;
         if (this.timeLeft <= 0) {
@@ -135,25 +165,23 @@ export default {
       const user = getAuth().currentUser;
       if (!user) return;
 
-      const highscoreRef = doc(db, 'users', user.uid, 'trivia', 'highscore');
-      try {
-        const snapshot = await getDoc(highscoreRef);
-        const previousHigh = snapshot.exists() ? snapshot.data().score : 0;
+      const ref = doc(db, 'users', user.uid);
+      const snap = await getDoc(ref);
+      const previousScore = snap.exists() ? snap.data().triviaScore || 0 : 0;
 
-        if (!snapshot.exists() || this.score > previousHigh) {
-          await setDoc(highscoreRef, {
-            score: this.score,
-            updatedAt: new Date(),
-          });
-          this.highScore = this.score;
-        }
-      } catch (err) {
-        console.error('Error saving high score:', err);
+      if (!snap.exists() || this.score > previousScore) {
+        await setDoc(ref, {
+          triviaScore: this.score,
+        }, { merge: true });
       }
+
+      this.highScore = Math.max(this.highScore, this.score);
+      await this.fetchLeaderboard();
     },
   },
   created() {
     this.fetchHighScore();
+    this.fetchLeaderboard();
   },
 };
 </script>
@@ -161,61 +189,58 @@ export default {
 <style scoped>
 .mini-game {
   position: relative;
-  z-index: 1;
+  z-index: 0;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 30px;
   background: #0a0f1f;
+  padding: 30px;
   font-family: 'Orbitron', sans-serif;
   color: #e0f7ff;
 }
 
 .mini-game-content {
   position: relative;
-  z-index: 2;
+  z-index: 10;
+  background: rgba(10, 15, 31, 0.95);
+  border: 2px solid #00e5ff;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 0 20px #00e5ff55;
   max-width: 700px;
   width: 100%;
   text-align: center;
-  background: rgba(10, 15, 31, 0.95);
-  padding: 40px;
-  border-radius: 16px;
-  border: 2px solid #00e5ff;
-  box-shadow: 0 0 20px #00e5ff55, 0 0 40px #00e5ff22;
+  margin-bottom: 30px;
 }
 
 .start-btn {
   padding: 14px 28px;
   font-size: 18px;
-  border: none;
   border-radius: 12px;
   background-color: #00e5ff;
   color: #0a0f1f;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 0 16px #00e5ff, 0 0 32px #00e5ff66;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 16px #00e5ff;
+  transition: 0.2s;
 }
 
 .start-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 24px #00e5ff, 0 0 48px #00e5ffaa;
+  box-shadow: 0 0 24px #00e5ff;
 }
 
 .info-bar {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
   color: #00e5ff;
-  text-shadow: 0 0 8px #00e5ff;
-  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .question-box {
-  margin-top: 20px;
-  padding: 24px;
   background: #101c30;
+  padding: 24px;
   border-radius: 12px;
   box-shadow: 0 0 12px #00e5ff33;
 }
@@ -224,7 +249,6 @@ export default {
   font-weight: bold;
   font-size: 20px;
   color: #00e5ff;
-  text-shadow: 0 0 10px #00e5ff88;
 }
 
 .options {
@@ -238,24 +262,61 @@ export default {
   padding: 12px;
   font-size: 16px;
   background: #132238;
-  color: #e0f7ff;
-  border: 2px solid #00e5ff33;
   border-radius: 10px;
+  border: 2px solid #00e5ff33;
+  color: #e0f7ff;
   cursor: pointer;
-  box-shadow: 0 0 10px #00e5ff11;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .option-btn:hover {
   background: #00e5ff;
   color: #101c30;
-  box-shadow: 0 0 16px #00e5ff, 0 0 32px #00e5ff88;
+  box-shadow: 0 0 16px #00e5ff;
 }
 
 .high-score {
   color: #00e5ff;
-  text-shadow: 0 0 10px #00e5ff88;
-  font-size: 18px;
   margin-bottom: 20px;
+}
+
+.leaderboard-section {
+  position: relative;
+  z-index: 10;
+  max-width: 700px;
+  width: 100%;
+  background: rgba(0, 229, 255, 0.05);
+  border: 1px solid #00e5ff33;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.leaderboard-section h3 {
+  margin-bottom: 10px;
+  color: #00e5ff;
+}
+
+.leaderboard-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.leaderboard-entry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  background: rgba(0, 229, 255, 0.08);
+  border-left: 4px solid #00e5ff;
+  border-radius: 6px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #00e5ff88;
+  background: #0e1b2e;
 }
 </style>
