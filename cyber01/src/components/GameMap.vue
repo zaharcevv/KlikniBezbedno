@@ -68,7 +68,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup>  
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { islands } from '@/data/islands.js'
