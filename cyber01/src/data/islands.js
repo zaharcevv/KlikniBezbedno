@@ -1,7 +1,7 @@
 export const islands = [
   {
     id: 1,
-    title: 'Phishing Port',
+    title: 'Фишинг Лука',
     theme: 'phishing',
     icon: 'mdi-fish',
     image: '/themes/prikazna1.jpg',
@@ -33,10 +33,10 @@ export const islands = [
   },
   {
     id: 2,
-    title: 'WiFi Wasteland',
+    title: 'WiFi Пустелија',
     theme: 'wifi',
     icon: 'mdi-wifi-alert',
-    image: '/images/wifi.jpg',
+    image: '/themes/prikazna2.jpg',
     scenarioTitle: 'Опасен јавен WiFi во кафе',
     scenario: 'Седиш во кафе и гледаш отворена WiFi мрежа со име „FreeCafeWiFi“.',
     questions: [
@@ -65,10 +65,10 @@ export const islands = [
   },
   {
     id: 3,
-    title: 'Password Peaks',
+    title: 'Врвови на лозинки',
     theme: 'password-attacks',
     icon: 'mdi-lock',
-    image: '/images/password.jpg',
+    image: '/themes/prikazna3.jpg',
     scenarioTitle: 'Иста лозинка на сите сметки',
     scenario: 'Имаш една лозинка што ја користиш за Instagram, Gmail и Discord.',
     questions: [
@@ -89,15 +89,15 @@ export const islands = [
       {
         id: '3-3',
         text: 'Која алатка може да ти помогне да не ги забораваш лозинките?',
-        options: ['VPN', 'Instagram', 'Password Manager', 'Google Search'],
+        options: ['VPN', 'Instagram', 'Менаџер за лозинки', 'Google Search'],
         correct: 2,
-        explanation: 'Password Manager ги чува и организира твоите лозинки безбедно.'
+        explanation: 'Менаџерот за лозинки ги чува и организира твоите лозинки безбедно.'
       }
     ]
   },
   {
     id: 4,
-    title: 'Privacy Plaza',
+    title: 'Плоштад на приватноста',
     theme: 'privacy-by-design',
     icon: 'mdi-shield-account',
     image: '/images/privacy.jpg',
@@ -129,7 +129,7 @@ export const islands = [
   },
   {
     id: 5,
-    title: 'Malware Metro',
+    title: 'Метро на малициозен софтвер',
     theme: 'malware',
     icon: 'mdi-bug',
     image: '/images/malware.jpg',
@@ -159,4 +159,4 @@ export const islands = [
       }
     ]
   }
-] ;
+];

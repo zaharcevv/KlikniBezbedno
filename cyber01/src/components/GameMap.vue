@@ -64,18 +64,16 @@
     />
 
     <BottomNav />
-
   </div>
 </template>
 
-<script setup>  
+<script setup>
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { islands } from '@/data/islands.js'
 import QuestionDialog from './QuestionDialog.vue'
 import confetti from 'canvas-confetti'
 import BottomNav from '@/components/BottomNav.vue'
-
 
 const userStore = useUserStore()
 const userData = userStore.userData
@@ -113,13 +111,12 @@ const fireConfetti = () => {
     shapes: ['circle', 'square'],
   })
 }
-
 </script>
 
 <style scoped>
 .map-wrapper {
   padding-top: 80px;
-    padding-bottom: 80px;
+  padding-bottom: 80px;
   animation: fadeIn 1s ease;
   position: relative;
 }
