@@ -63,33 +63,19 @@
       @completed="onCompleted"
     />
 
-    <!-- 🔻 Bottom Navigation -->
-    <v-bottom-navigation
-      app
-      height="64"
-      class="cyber-bottom-nav"
-      v-model="activeNav"
-    >
-      <v-btn to="/map" value="/map" icon>
-        <v-icon>mdi-map</v-icon>
-      </v-btn>
-      <v-btn to="/profile" value="/profile" icon>
-        <v-icon>mdi-account-circle</v-icon>
-      </v-btn>
-      <v-btn to="/about" value="/about" icon>
-        <v-icon>mdi-information</v-icon>
-      </v-btn>
-    </v-bottom-navigation>
+    <BottomNav />
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { useRoute } from 'vue-router'
 import { islands } from '@/data/islands.js'
 import QuestionDialog from './QuestionDialog.vue'
 import confetti from 'canvas-confetti'
+import BottomNav from '@/components/BottomNav.vue'
+
 
 const userStore = useUserStore()
 const userData = userStore.userData
@@ -128,14 +114,12 @@ const fireConfetti = () => {
   })
 }
 
-// 🔽 Active navigation detection
-const route = useRoute()
-const activeNav = computed(() => route.path)
 </script>
 
 <style scoped>
 .map-wrapper {
   padding-top: 80px;
+    padding-bottom: 80px;
   animation: fadeIn 1s ease;
   position: relative;
 }
