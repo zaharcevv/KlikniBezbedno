@@ -5,12 +5,17 @@
     class="cyber-bottom-nav"
     v-model="activeNav"
   >
+    <!-- Map Icon -->
     <v-btn to="/map" value="/map" icon>
       <v-icon>mdi-map</v-icon>
     </v-btn>
-    <v-btn to="/profile" value="/profile" icon>
-      <v-icon>mdi-account-circle</v-icon>
+
+    <!-- Dynamic Login/Profile Icon -->
+    <v-btn :to="user ? '/profile' : '/login'" :value="user ? '/profile' : '/login'" icon>
+      <v-icon>{{ user ? 'mdi-account-box' : 'mdi-account-circle' }}</v-icon>
     </v-btn>
+
+    <!-- About Icon -->
     <v-btn to="/about" value="/about" icon>
       <v-icon>mdi-information</v-icon>
     </v-btn>
@@ -18,11 +23,21 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 const route = useRoute()
 const activeNav = computed(() => route.path)
+
+const user = ref(null)
+
+onMounted(() => {
+  const auth = getAuth()
+  onAuthStateChanged(auth, (u) => {
+    user.value = u
+  })
+})
 </script>
 
 <style scoped>
@@ -41,6 +56,7 @@ const activeNav = computed(() => route.path)
   color: #00ffee !important;
   transition: transform 0.3s;
 }
+
 .v-bottom-navigation .v-btn:hover {
   transform: scale(1.2);
 }

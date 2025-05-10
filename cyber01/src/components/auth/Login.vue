@@ -53,7 +53,7 @@ export default {
     const login = async () => {
       try {
         await signInWithEmailAndPassword(auth, email.value, password.value)
-        router.push('/dashboard') // or wherever your app goes after login
+        router.push('/map') // or wherever your app goes after login
       } catch (err) {
         error.value = err.message
       }
