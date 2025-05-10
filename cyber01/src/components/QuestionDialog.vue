@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="internalVisible" max-width="750" persistent transition="dialog-bottom-transition">
+  <v-dialog v-model="internalVisible" max-width="850" persistent transition="dialog-bottom-transition">
     <v-card class="dialog-card animate__animated animate__fadeInUp">
       
       <!-- СЦЕНАРИО И СЛИКА -->
@@ -36,7 +36,7 @@
 
         <v-card-text class="question-layout">
           <transition name="fade-scale">
-            <div key="answers" class="options-box">
+            <div v-if="true" key="answers" class="options-box">
               <v-btn
                 v-for="(option, index) in currentQuestion.options"
                 :key="index"
@@ -158,6 +158,7 @@ const resetAnswer = () => {
   width: 100%;
   display: flex;
   flex-direction: column;
+  padding-inline: 16px;
 }
 
 .dialog-content {
@@ -168,17 +169,20 @@ const resetAnswer = () => {
 
 .scenario-side {
   flex: 1;
-  padding: 24px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 20px;
+  gap: 15px;
   background-color: rgba(10, 16, 24, 0.95);
 }
 
 .image-side {
   flex: 1;
   position: relative;
+  overflow: hidden;
+  border-left: 2px solid #00ffee44;
+  backdrop-filter: blur(4px);
 }
 
 .dialog-background {
@@ -186,8 +190,20 @@ const resetAnswer = () => {
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: brightness(0.3);
+  animation: zoomInSlow 20s ease-in-out infinite alternate;
+  filter: brightness(0.45) contrast(1.1) saturate(1.2);
+  transition: transform 1s ease;
 }
+
+@keyframes zoomInSlow {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
 
 .title {
   font-size: 24px;
@@ -200,7 +216,7 @@ const resetAnswer = () => {
   text-overflow: unset;
   word-wrap: break-word;
   word-break: break-word;
-  padding: 16px 12px;
+  margin-top: 10px;
 }
 
 .scenario-box {
@@ -228,10 +244,11 @@ const resetAnswer = () => {
   border-radius: 10px;
   padding: 10px 20px;
   box-shadow: 0 0 10px #00ffeeaa;
+  margin-bottom: 20px;
 }
 
 .question-layout {
-  padding: 20px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -298,6 +315,10 @@ const resetAnswer = () => {
 
   .image-side {
     height: 200px;
+  }
+
+  .title {
+    font-size: 20px;
   }
 }
 </style>

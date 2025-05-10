@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import AppNavbar from '@/components/AppNavbar.vue'
+// import AppNavbar from '@/components/AppNavbar.vue'
 
 const globalParticlesCanvas = ref(null)
 const isTransitioning = ref(false)
@@ -115,7 +115,7 @@ onMounted(() => {
   inset: 0;
   background: radial-gradient(circle at center, #00ffee33 0%, transparent 80%);
   z-index: 5;
-  animation: pulseIn 0.6s ease;
+  animation: pulseIn 0.3s ease;
   pointer-events: none;
 }
 
