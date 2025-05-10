@@ -1,14 +1,43 @@
+<template>
+  <v-app>
+    <div class="global-background"></div>
+    <canvas class="global-particles" ref="globalParticlesCanvas"></canvas>
+    <div v-if="isTransitioning" class="transition-overlay"></div>
+
+    <!-- Router View -->
+    <router-view v-slot="{ Component }">
+      <transition name="world" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
+
+    <!-- 🎵 Mute Button -->
+    <v-btn
+      icon
+      class="music-toggle"
+      @click="audio.toggleAudio"
+      :title="audio.isMuted ? 'Вклучи музика' : 'Исклучи музика'"
+    >
+      <v-icon color="cyan lighten-2">
+        {{ audio.isMuted ? 'mdi-music-off' : 'mdi-music-note' }}
+      </v-icon>
+    </v-btn>
+  </v-app>
+</template>
+
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/firebase/firebase'
 import { useUserStore } from '@/stores/user'
+import { useAudioStore } from '@/stores/audio'
 
 const globalParticlesCanvas = ref(null)
 const isTransitioning = ref(false)
 const route = useRoute()
 const userStore = useUserStore()
+const audio = useAudioStore()
 
 watch(route, () => {
   isTransitioning.value = true
@@ -16,14 +45,13 @@ watch(route, () => {
 })
 
 onMounted(() => {
-  // Load user data on auth state change
+  audio.startAudio()
+
   onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      await userStore.fetchUserData()
-    }
+    if (user) await userStore.fetchUserData()
   })
 
-  // Particles setup
+  // Particle Setup
   const canvas = globalParticlesCanvas.value
   const ctx = canvas.getContext('2d')
   let particles = []
@@ -68,23 +96,6 @@ onMounted(() => {
   animate()
 })
 </script>
-
-
-<template>
-  <v-app>
-    <div class="global-background"></div>
-    <canvas class="global-particles" ref="globalParticlesCanvas"></canvas>
-    <div v-if="isTransitioning" class="transition-overlay"></div>
-
-    <!-- <AppNavbar /> ✅ Good -->
-    
-    <router-view v-slot="{ Component }">
-      <transition name="world" mode="out-in">
-        <component :is="Component" />
-      </transition>
-    </router-view>
-  </v-app>
-</template>
 
 <style scoped>
 .global-background {
@@ -136,25 +147,36 @@ onMounted(() => {
   100% { opacity: 0; transform: scale(1.2); }
 }
 
+.music-toggle {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  background: rgba(0, 255, 238, 0.1);
+  border-radius: 50%;
+  box-shadow: 0 0 10px #00ffee55;
+  z-index: 999;
+  transition: transform 0.2s ease;
+}
+.music-toggle:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 18px #00ffeeaa;
+}
+
 .world-enter-active, .world-leave-active {
   transition: all 0.6s ease;
 }
-
 .world-enter-from {
   opacity: 0;
   transform: translateY(50px) scale(0.9);
 }
-
 .world-enter-to {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
-
 .world-leave-from {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
-
 .world-leave-to {
   opacity: 0;
   transform: translateY(-50px) scale(0.95);
