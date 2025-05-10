@@ -1,11 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-<<<<<<< HEAD
-import Navbar from './components/navbar.vue'
-=======
-import AppNavbar from '@/components/AppNavbar.vue'
->>>>>>> 8638392f1d03e2129146ab554d286207de56a967
+import Navbar from './components/Navbar.vue'
 
 const globalParticlesCanvas = ref(null)
 const isTransitioning = ref(false)
@@ -68,9 +64,7 @@ onMounted(() => {
     <div class="global-background"></div>
     <canvas class="global-particles" ref="globalParticlesCanvas"></canvas>
     <div v-if="isTransitioning" class="transition-overlay"></div>
-
-    <!-- <AppNavbar /> ✅ Good -->
-    
+        <Navbar />
     <router-view v-slot="{ Component }">
       <transition name="world" mode="out-in">
         <component :is="Component" />

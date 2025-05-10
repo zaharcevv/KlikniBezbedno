@@ -3,6 +3,7 @@ export const islands = [
     id: 1,
     title: 'Phishing Port',
     theme: 'phishing',
+    icon: 'mdi-fish',
     questions: [
       {
         id: '1-1',
@@ -45,6 +46,7 @@ export const islands = [
     id: 2,
     title: 'WiFi Wasteland',
     theme: 'wifi',
+    icon: 'mdi-wifi-alert',
     questions: [
       {
         id: '2-1',
@@ -87,6 +89,7 @@ export const islands = [
     id: 3,
     title: 'Password Peaks',
     theme: 'password-attacks',
+    icon: 'mdi-lock',
     questions: [
       {
         id: '3-1',
@@ -129,12 +132,14 @@ export const islands = [
     id: 4,
     title: 'Privacy Plaza',
     theme: 'privacy-by-design',
+    icon: 'mdi-shield-account',
     questions: [/* ... same as before ... */]
   },
   {
     id: 5,
     title: 'Malware Metro',
     theme: 'malware',
+    icon: 'mdi-bug',
     questions: [/* ... same as before ... */]
   }
 ];
