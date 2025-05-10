@@ -14,7 +14,10 @@
     <v-btn :to="user ? '/profile' : '/login'" :value="user ? '/profile' : '/login'" icon>
       <v-icon>{{ user ? 'mdi-account-box' : 'mdi-account-circle' }}</v-icon>
     </v-btn>
-
+    <v-btn to="/trivia" value="/trivia" icon>
+      <v-icon>mdi-trophy</v-icon>
+    </v-btn>
+    
     <!-- About Icon -->
     <v-btn to="/about" value="/about" icon>
       <v-icon>mdi-information</v-icon>
