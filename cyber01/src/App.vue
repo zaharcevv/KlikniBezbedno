@@ -1,11 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-<<<<<<< HEAD
-import Navbar from './components/navbar.vue'
-=======
 import AppNavbar from '@/components/AppNavbar.vue'
->>>>>>> 8638392f1d03e2129146ab554d286207de56a967
 
 const globalParticlesCanvas = ref(null)
 const isTransitioning = ref(false)
