@@ -4,7 +4,7 @@ export const islands = [
     title: 'Phishing Port',
     theme: 'phishing',
     icon: 'mdi-fish',
-    image: '/themes/phishing.png',
+    image: '/themes/prikazna1.jpg',
     scenarioTitle: 'Фалсификувана порака од банка',
     scenario: 'Добиваш е-пошта од "банка" која бара итно да кликнеш на линк за да ја потврдиш твојата сметка.',
     questions: [
