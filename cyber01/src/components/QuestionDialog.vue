@@ -101,11 +101,10 @@ const isLastQuestion = computed(() => questionIndex.value === props.island.quest
 watch(() => props.visible, (val) => {
   if (val) {
     showQuestions.value = false
-    questionIndex.value = 0  // ← ДОДАДИ ОВА
+    questionIndex.value = 0
     resetAll()
   }
 })
-
 
 const submitAnswer = (selected) => {
   answered.value = true
@@ -130,7 +129,6 @@ const nextQuestion = () => {
     resetAll()
   }
 }
-
 
 const resetAll = () => {
   showExplanation.value = false
@@ -160,21 +158,25 @@ const resetAnswer = () => {
 .dialog-content {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100%;
 }
 
 .scenario-mode {
   flex-direction: row;
-  height: 360px;
+  height: auto;
+  flex-wrap: wrap;
 }
 
-.question-mode {
-  padding: 32px;
-  gap: 20px;
+.scenario-side,
+.image-side {
+  flex: 1 1 50%;
+  min-width: 300px;
+  box-sizing: border-box;
 }
 
 .scenario-side {
-  flex: 1;
-  padding: 40px;
+  padding: 5vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -182,10 +184,10 @@ const resetAnswer = () => {
 }
 
 .image-side {
-  flex: 1;
   position: relative;
   overflow: hidden;
   border-left: 2px solid #00ffee44;
+  min-height: 200px;
 }
 
 .dialog-background {
@@ -195,6 +197,8 @@ const resetAnswer = () => {
   background-position: center;
   filter: brightness(0.45) contrast(1.1);
   animation: zoomInSlow 20s ease-in-out infinite alternate;
+  width: 100%;
+  height: 100%;
 }
 
 @keyframes zoomInSlow {
@@ -210,9 +214,8 @@ const resetAnswer = () => {
   text-shadow: 0 0 10px #00ffeeaa;
   margin-bottom: 1rem;
   white-space: normal;
-overflow: visible;
-text-overflow: unset;
-
+  overflow: visible;
+  text-overflow: unset;
 }
 
 .scenario-box {
@@ -237,9 +240,9 @@ text-overflow: unset;
 .try-again-btn,
 .next-btn {
   font-weight: bold;
-  font-size: 15px;
+  font-size: 4vw;
   border-radius: 12px;
-  padding: 12px 24px;
+  padding: 3vw 5vw;
   margin-top: 10px;
   text-transform: uppercase;
   transition: transform 0.3s ease;
@@ -250,6 +253,12 @@ text-overflow: unset;
 }
 .glow-btn:hover {
   transform: scale(1.05);
+}
+
+.question-mode {
+  padding: 4vw;
+  gap: 20px;
+  width: 100%;
 }
 
 .question-layout {
@@ -272,9 +281,9 @@ text-overflow: unset;
   max-width: 100%;
   text-align: center;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 4vw;
   border-radius: 14px;
-  padding: 16px 20px;
+  padding: 4vw 2vw;
   margin: 0 auto;
   transition: all 0.25s ease;
   box-shadow: 0 3px 12px rgba(0, 255, 238, 0.25);
@@ -285,8 +294,6 @@ text-overflow: unset;
   min-height: 56px;
   text-transform: none;
 }
-
-
 
 .answer-btn:hover {
   transform: scale(1.04);
@@ -312,15 +319,39 @@ text-overflow: unset;
 @media (max-width: 768px) {
   .scenario-mode {
     flex-direction: column;
-    height: auto;
   }
 
+  .scenario-side,
   .image-side {
-    height: 200px;
+    flex: 1 1 100%;
   }
 
   .title {
     font-size: 20px;
   }
+
+  .answer-btn,
+  .start-btn,
+  .try-again-btn,
+  .next-btn {
+    font-size: 16px;
+    padding: 14px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 18px;
+  }
+
+  .scenario-text {
+    font-size: 14px;
+  }
+
+  .answer-btn {
+    font-size: 14px;
+    padding: 12px;
+  }
 }
 </style>
+    

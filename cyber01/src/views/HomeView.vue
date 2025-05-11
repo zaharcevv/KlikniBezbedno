@@ -7,7 +7,7 @@
           <span class="mission">МИСИЈА</span>
         </h1>
         <p class="tagline glow-flicker">
-          Совладај ја сајбер безбедноста преку епска, гамифицирана авантура.
+          Совладај ја сајбер безбедноста преку епска, гејмифицирана авантура.
         </p>
         <v-btn class="glow-button neon-glow" large @click="goToMap">
           ЗАПОЧНИ АВАНТУРА
