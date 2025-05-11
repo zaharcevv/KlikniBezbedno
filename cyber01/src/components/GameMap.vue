@@ -80,6 +80,7 @@ import BottomNav from '@/components/BottomNav.vue'
 const userStore = useUserStore()
 const userData = userStore.userData
 
+
 const selectedIsland = ref(null)
 const showDialog = ref(false)
 const confettiCanvas = ref(null)

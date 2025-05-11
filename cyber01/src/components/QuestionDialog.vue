@@ -1,26 +1,21 @@
 <template>
-  <v-dialog v-model="internalVisible" max-width="850" persistent transition="dialog-bottom-transition">
+  <v-dialog v-model="internalVisible" max-width="860" persistent transition="dialog-bottom-transition">
     <v-card class="dialog-card animate__animated animate__fadeInUp">
-      
-      <!-- СЦЕНАРИО И СЛИКА -->
+      <!-- СЦЕНАРИО -->
       <template v-if="!showQuestions">
-        <div class="dialog-content">
+        <div class="dialog-content scenario-mode">
           <div class="scenario-side">
             <v-card-title class="title">
               {{ island.scenarioTitle }}
             </v-card-title>
 
             <div class="scenario-box">
-              <v-icon class="mb-2 scenario-icon" size="42">mdi-lightbulb-on-outline</v-icon>
+              <v-icon class="mb-2 scenario-icon" size="44">mdi-lightbulb-on-outline</v-icon>
               <p class="scenario-text">{{ island.scenario }}</p>
             </div>
 
-            <v-btn
-              color="cyan darken-2"
-              class="start-btn"
-              @click="showQuestions = true"
-            >
-              Почни со прашања
+            <v-btn color="cyan darken-2" class="start-btn glow-btn" @click="showQuestions = true">
+              Започни со прашања
             </v-btn>
           </div>
 
@@ -32,48 +27,50 @@
 
       <!-- ПРАШАЊА -->
       <template v-else>
-        <v-card-title class="title">{{ currentQuestion.text }}</v-card-title>
+        <div class="dialog-content question-mode">
+          <v-card-title class="title">{{ currentQuestion.text }}</v-card-title>
 
-        <v-card-text class="question-layout">
-          <transition name="fade-scale">
-            <div v-if="true" key="answers" class="options-box">
-              <v-btn
-                v-for="(option, index) in currentQuestion.options"
-                :key="index"
-                class="answer-btn"
-                :color="getButtonColor(index)"
-                :disabled="answered"
-                @click="submitAnswer(index)"
-                block
-              >
-                {{ option }}
-              </v-btn>
-            </div>
-          </transition>
+          <v-card-text class="question-layout">
+            <transition name="fade-scale">
+              <div v-if="true" class="options-box">
+                <v-btn
+                  v-for="(option, index) in currentQuestion.options"
+                  :key="index"
+                  class="answer-btn"
+                  :color="getButtonColor(index)"
+                  :disabled="answered"
+                  @click="submitAnswer(index)"
+                  block
+                >
+                  {{ option }}
+                </v-btn>
+              </div>
+            </transition>
 
-          <transition name="fade-scale">
-            <div v-if="showExplanation" key="retry">
-              <v-btn
-                color="red darken-1"
-                class="try-again-btn"
-                @click="resetAnswer"
-              >
-                Обиди се повторно
-              </v-btn>
-            </div>
-          </transition>
-        </v-card-text>
+            <transition name="fade-scale">
+              <div v-if="showExplanation">
+                <v-btn
+                  color="red darken-1"
+                  class="try-again-btn"
+                  @click="resetAnswer"
+                >
+                  Обиди се повторно
+                </v-btn>
+              </div>
+            </transition>
+          </v-card-text>
 
-        <v-card-actions class="footer">
-          <v-btn
-            @click="nextQuestion"
-            :disabled="!answered || selectedIndex !== currentQuestion.correct"
-            color="cyan darken-2"
-            class="next-btn animate__animated animate__pulse animate__infinite"
-          >
-            {{ isLastQuestion ? 'Готово' : 'Следно' }}
-          </v-btn>
-        </v-card-actions>
+          <v-card-actions class="footer">
+            <v-btn
+              @click="nextQuestion"
+              :disabled="!answered || selectedIndex !== currentQuestion.correct"
+              color="cyan darken-2"
+              class="next-btn animate__animated animate__pulse animate__infinite"
+            >
+              {{ isLastQuestion ? 'Готово' : 'Следно' }}
+            </v-btn>
+          </v-card-actions>
+        </div>
       </template>
     </v-card>
   </v-dialog>
@@ -104,9 +101,11 @@ const isLastQuestion = computed(() => questionIndex.value === props.island.quest
 watch(() => props.visible, (val) => {
   if (val) {
     showQuestions.value = false
+    questionIndex.value = 0  // ← ДОДАДИ ОВА
     resetAll()
   }
 })
+
 
 const submitAnswer = (selected) => {
   answered.value = true
@@ -132,6 +131,7 @@ const nextQuestion = () => {
   }
 }
 
+
 const resetAll = () => {
   showExplanation.value = false
   answered.value = false
@@ -149,22 +149,27 @@ const resetAnswer = () => {
 @import 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css';
 
 .dialog-card {
-  background-color: rgba(6, 14, 22, 0.97);
+  background-color: rgba(8, 16, 26, 0.97);
   color: #e0f7ff;
   border-radius: 24px;
+  border: 2px solid #00ffee55;
   box-shadow: 0 0 36px #00ffee88;
-  border: 2px solid #00ffee44;
   overflow: hidden;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding-inline: 16px;
 }
 
 .dialog-content {
   display: flex;
+  flex-direction: column;
+}
+
+.scenario-mode {
   flex-direction: row;
-  height: 340px;
+  height: 360px;
+}
+
+.question-mode {
+  padding: 32px;
+  gap: 20px;
 }
 
 .scenario-side {
@@ -173,8 +178,7 @@ const resetAnswer = () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 15px;
-  background-color: rgba(10, 16, 24, 0.95);
+  background: rgba(10, 16, 24, 0.95);
 }
 
 .image-side {
@@ -182,7 +186,6 @@ const resetAnswer = () => {
   position: relative;
   overflow: hidden;
   border-left: 2px solid #00ffee44;
-  backdrop-filter: blur(4px);
 }
 
 .dialog-background {
@@ -190,65 +193,66 @@ const resetAnswer = () => {
   inset: 0;
   background-size: cover;
   background-position: center;
+  filter: brightness(0.45) contrast(1.1);
   animation: zoomInSlow 20s ease-in-out infinite alternate;
-  filter: brightness(0.45) contrast(1.1) saturate(1.2);
-  transition: transform 1s ease;
 }
 
 @keyframes zoomInSlow {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.1);
-  }
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
 }
-
 
 .title {
   font-size: 24px;
   font-weight: 800;
   color: #00ffee;
-  text-shadow: 0 0 10px #00ffeeaa;
   text-align: center;
+  text-shadow: 0 0 10px #00ffeeaa;
+  margin-bottom: 1rem;
   white-space: normal;
-  overflow: visible;
-  text-overflow: unset;
-  word-wrap: break-word;
-  word-break: break-word;
-  margin-top: 10px;
+overflow: visible;
+text-overflow: unset;
+
 }
 
 .scenario-box {
-  background: rgba(18, 26, 38, 0.94);
+  background: rgba(20, 30, 45, 0.9);
   border-radius: 16px;
   padding: 16px;
-  color: #c6f9ff;
-  box-shadow: inset 0 0 16px #00ffee33;
+  box-shadow: inset 0 0 12px #00ffee44;
   text-align: center;
 }
 
 .scenario-text {
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.6;
+  color: #c6f9ff;
 }
 
 .scenario-icon {
   color: #00ffee;
 }
 
-.start-btn {
-  align-self: center;
+.start-btn,
+.try-again-btn,
+.next-btn {
   font-weight: bold;
-  font-size: 14px;
-  border-radius: 10px;
-  padding: 10px 20px;
-  box-shadow: 0 0 10px #00ffeeaa;
-  margin-bottom: 20px;
+  font-size: 15px;
+  border-radius: 12px;
+  padding: 12px 24px;
+  margin-top: 10px;
+  text-transform: uppercase;
+  transition: transform 0.3s ease;
+}
+
+.glow-btn {
+  box-shadow: 0 0 16px #00ffeeaa;
+}
+.glow-btn:hover {
+  transform: scale(1.05);
 }
 
 .question-layout {
-  padding: 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -263,38 +267,36 @@ const resetAnswer = () => {
 }
 
 .answer-btn {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
   font-weight: 600;
   font-size: 16px;
   border-radius: 14px;
-  box-shadow: 0 3px 10px rgba(0, 255, 238, 0.25);
-  transition: all 0.3s ease;
-}
-.answer-btn:hover {
-  transform: scale(1.04);
-  box-shadow: 0 0 16px rgba(0, 255, 238, 0.6);
+  padding: 16px 20px;
+  margin: 0 auto;
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 12px rgba(0, 255, 238, 0.25);
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+  min-height: 56px;
+  text-transform: none;
 }
 
-.try-again-btn {
-  margin-top: 10px;
-  font-weight: bold;
-  font-size: 14px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #ff0044aa;
+
+
+.answer-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 18px rgba(0, 255, 238, 0.6);
 }
 
 .footer {
   display: flex;
   justify-content: center;
-  padding: 1rem 1.5rem;
-}
-
-.next-btn {
-  border-radius: 12px;
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 15px;
-  padding: 10px 24px;
-  box-shadow: 0 0 14px #00ffeeaa;
+  margin-top: 16px;
 }
 
 .fade-scale-enter-active,
@@ -308,7 +310,7 @@ const resetAnswer = () => {
 }
 
 @media (max-width: 768px) {
-  .dialog-content {
+  .scenario-mode {
     flex-direction: column;
     height: auto;
   }

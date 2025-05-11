@@ -22,10 +22,20 @@ export const useUserStore = defineStore('user', () => {
     userData.value.xp += amount
   }
 
+  async function fetchUserData() {
+    // Пример симулација — тука можеш да ставиш повик од API или Firebase
+    userData.value = {
+      currentIsland: 2,
+      hearts: 4,
+      xp: 150
+    }
+  }
+
   return {
     userData,
     resetHearts,
     loseHeart,
-    addXP
+    addXP,
+    fetchUserData // важно: додадено во return
   }
 })

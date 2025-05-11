@@ -5,7 +5,7 @@ export const useAudioStore = defineStore('audio', () => {
   const isMuted = ref(false)
   const audio = new Audio('public/audio/audio.mp3')
   audio.loop = true
-  audio.volume = 0.5
+  audio.volume = 0.2
 
   const toggleAudio = () => {
     isMuted.value = !isMuted.value

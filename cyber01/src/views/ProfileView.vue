@@ -2,23 +2,31 @@
   <div class="profile-wrapper">
     <v-container class="profile-container" fluid>
       <v-card class="profile-card" flat>
-        <h1 class="profile-title">Your Cyber Hero Profile</h1>
+        <h1 class="profile-title">Твојот Сајбер Херој Профил</h1>
 
         <v-avatar v-if="userData?.avatar" size="120" class="avatar-glow mb-6">
           <img :src="userData.avatar" alt="avatar" />
         </v-avatar>
 
         <div class="profile-info">
-          <p><strong>Username:</strong> {{ userData?.username || 'N/A' }}</p>
-          <p><strong>Email:</strong> {{ user?.email || 'N/A' }}</p>
-          <p><strong>Level:</strong> <span class="level-tag">Coming soon...</span></p>
+          <p><strong>Корисничко име:</strong> {{ userData?.username || 'Нема податок' }}</p>
+          <p><strong>Е-пошта:</strong> {{ user?.email || 'Нема податок' }}</p>
+          <p><strong>Ниво:</strong> <span class="level-tag">Наскоро...</span></p>
         </div>
 
-        <v-btn class="logout-button mt-6" @click="logout" block>
-          Logout
-        </v-btn>
+        <v-row class="mt-6" justify="center" align="center" dense>
+          <v-col cols="6">
+            <v-btn class="back-button" @click="goBack" block>
+              <v-icon start>mdi-arrow-left</v-icon> Назад
+            </v-btn>
+          </v-col>
+          <v-col cols="6">
+            <v-btn class="logout-button" @click="logout" block>
+              Одјави се
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-card>
-
     </v-container>
   </div>
 </template>
@@ -30,13 +38,11 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebase/firebase'
 
-
 export default {
   setup() {
     const user = ref(null)
     const userData = ref(null)
     const router = useRouter()
-
     const auth = getAuth()
 
     onMounted(() => {
@@ -51,7 +57,7 @@ export default {
             userData.value = docSnap.data()
           }
         } catch (err) {
-          console.error('Error fetching user data:', err)
+          console.error('Грешка при вчитување на кориснички податоци:', err)
         }
       })
     })
@@ -61,11 +67,15 @@ export default {
         await signOut(auth)
         router.push('/login')
       } catch (err) {
-        console.error('Logout failed:', err)
+        console.error('Неуспешна одјава:', err)
       }
     }
 
-    return { user, userData, logout }
+    const goBack = () => {
+      router.back()
+    }
+
+    return { user, userData, logout, goBack }
   }
 }
 </script>
